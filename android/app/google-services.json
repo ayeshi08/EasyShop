@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "655269908818",
+    "project_id": "storeadminpanel",
+    "storage_bucket": "storeadminpanel.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655269908818:android:851ffbb8d0b23bb1ab6a8b",
+        "android_client_info": {
+          "package_name": "com.example.grocery_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrAh72wYzfMkBgzn9DbpiMbchPWHEA-0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
