@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grocery_store/controllers/google-sign-in-Controller.dart';
+import 'package:grocery_store/screens/auth_ui/sign-inScreen.dart';
 import 'package:grocery_store/utils/app-constant.dart';
 import 'package:lottie/lottie.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
-
+    WelcomeScreen({super.key});
+final GoogleSignInController _googleSignInController= Get.put(GoogleSignInController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,12 +50,14 @@ class WelcomeScreen extends StatelessWidget {
               width: Get.width / 1.2,
               height: Get.height / 12,
               child: TextButton.icon(
-                icon: Image.asset('assets/images/google.png'),
+                icon: Image.asset('assets/images/final-google-logo.png',height: 30,),
                 label: Text(
                   'Sign in with Google',
                   style: TextStyle(color: AppConstant.appContrastTextColor),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  _googleSignInController.SignInWithGoogle();
+                },
               ),
             ),
           ),
@@ -61,22 +65,26 @@ class WelcomeScreen extends StatelessWidget {
             height: Get.height / 35,
           ),
           Material(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: AppConstant.appMainColor,
-                  borderRadius: BorderRadius.circular(25)),
-              width: Get.width / 1.2,
-              height: Get.height / 12,
-              child: TextButton.icon(
-                icon: Icon(Icons.email_outlined,color: AppConstant.appTextColor,),
-                label: Text(
-                  'Sign in with Email',
-                  style: TextStyle(color: AppConstant.appContrastTextColor),
+              child:
+              Container(
+                decoration: BoxDecoration(
+                    color: AppConstant.appMainColor,
+                    borderRadius: BorderRadius.circular(25)),
+                width: Get.width / 1.2,
+                height: Get.height / 12,
+                child: TextButton.icon(
+                  icon: Icon(Icons.email_outlined,color: AppConstant.appContrastTextColor,size: 30,),
+                  label: Text(
+                    'Sign in with Email',
+                    style: TextStyle(color: AppConstant.appContrastTextColor),
+                  ),
+                  onPressed: () {
+                    Get.to(SignInScreen());
+                  },
                 ),
-                onPressed: () {},
               ),
             ),
-          ),
+
         ],
       ),
     );

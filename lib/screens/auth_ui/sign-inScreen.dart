@@ -1,10 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:grocery_store/controllers/get-user-data-controller.dart';
+import 'package:grocery_store/controllers/sign-in-controller.dart';
 import 'package:grocery_store/screens/auth_ui/sign-upScreen.dart';
+import 'package:grocery_store/screens/user_panel/main-screen.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../utils/app-constant.dart';
+import '../admin_panel/admin-main-screen.dart';
+import '../admin_panel/admin_panel.dart';
 import 'forgot-password.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -15,9 +21,10 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
+  TextEditingController userEmail = TextEditingController();
+  TextEditingController userPassword = TextEditingController();
+final SignInController signInController = Get.put(SignInController());
+  final GetUserDataController  getUserDataController= Get.put(GetUserDataController());
   @override
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
@@ -46,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Column(
                         children: [
                       TextFormField(
-                              controller: _emailController,
+                              controller: userEmail,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(
                                   Icons.email,
@@ -74,33 +81,39 @@ class _SignInScreenState extends State<SignInScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                        TextFormField(
+                        Obx(() =>TextFormField(
 
-                              controller: _passwordController,
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.visibility,
-                                  size: 18,
-                                  color: AppConstant.appContrastTextColor,
-                                ),
-                                contentPadding: EdgeInsets.only(top: 2,left: 5,),
-                                prefixIcon: Icon(
-                                  Icons.lock,
-                                  color: AppConstant.appContrastTextColor,
-                                ),
-                                labelText: 'Password',
-                                hintText: 'Enter your password',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                          controller: userPassword,
+                          decoration: InputDecoration(
+                            suffixIcon: GestureDetector(onTap: () {
+                              signInController.isPasswordVisible.toggle();
+                            },
+                              child: signInController.isPasswordVisible.value? Icon(Icons.visibility_off)
+                             : Icon(
+                                Icons.visibility,
+                                size: 18,
+                                color: AppConstant.appContrastTextColor,
                               ),
-                              obscureText: true, // Hide password text
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a password';
-                                }
-                                return null;
-                              },
                             ),
+                            contentPadding: EdgeInsets.only(top: 2,left: 5,),
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: AppConstant.appContrastTextColor,
+                            ),
+                            labelText: 'Password',
+                            hintText: 'Enter your password',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          obscureText: signInController.isPasswordVisible.value, // Hide password text
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a password';
+                            }
+                            return null;
+                          },
+                        ), ),
+
 
                           SizedBox(
                             height: 12,
@@ -108,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           Align(
                               alignment: Alignment.bottomRight,
                               child: InkWell(
-                                  onTap: () {Get.to(ForgotPassword());
+                                  onTap: () {Get.to(ForgetPasswordScreen());
                                     },
                                   child: Text(
                                     'Forgot Password?',
@@ -123,7 +136,38 @@ class _SignInScreenState extends State<SignInScreen> {
                             height: 50,
                             width: 200,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () async{
+
+                                String email = userEmail.text.trim();
+                                String password = userPassword.text.trim();
+                                if(email.isEmpty || password.isEmpty) {
+                                  Get.snackbar("Error", "Please enter all details");
+                                }else {
+                                  UserCredential? userCredential = await signInController.signInMethod(email, password);
+                                  var userData = await getUserDataController.getUserData(userCredential!.user!.uid);
+                                if (userCredential != null) {
+                                  if (userCredential.user!.emailVerified){
+                                    if (userData[0]['isAdmin'] == true) {
+                                      Get.snackbar("Success Admin Login", "Login Successfully!",snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: AppConstant.appScendoryColor,
+                                        colorText: AppConstant.appTextColor,);
+Get.offAll(() => AdminMainScreen());
+                                    }else {
+                                        Get.offAll(MainScreen());
+                                        Get.snackbar("Success User Login", "Login Successfully",snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: AppConstant.appScendoryColor,
+                                          colorText: AppConstant.appTextColor,);
+                                    }
+                                  }else {
+                                    Get.snackbar("Error", "Please varify your email before login",snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: AppConstant.appScendoryColor,
+                                      colorText: AppConstant.appTextColor,);
+                                  }
+                                }else {
+                                  Get.snackbar("Error", "Please try again");
+                                }
+                                }
+                              },
                               child: Text(
                                 'Login',
                                 style: TextStyle(
