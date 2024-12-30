@@ -20,10 +20,10 @@ class AllExclusiveSaleProduct extends StatelessWidget {
       backgroundColor: AppConstant.appMainColor,
       title: Text("All Exclusive sale products",style: TextStyle(color: AppConstant.appTextColor),),
     ),
-      body: FutureBuilder(
-        future: FirebaseFirestore.instance.collection('products')
-            .where('isSale',
-        isEqualTo:true )
+      body:FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('products')
+            .where('isSale', isEqualTo: true)
             .get(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapShot) {
           if (snapShot.hasError) {

@@ -8,20 +8,6 @@ plugins {
 
 android {
 
-
-    namespace = "com.example.grocery_store"
-    compileSdk = 34
-    ndkVersion = "27.0.12077973"
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.grocery_store"
@@ -33,6 +19,22 @@ android {
         versionName = flutter.versionName
         multiDexEnabled true
     }
+
+
+    namespace = "com.example.grocery_store"
+    compileSdk = 34
+    ndkVersion = "27.0.12077973"
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
 
     buildTypes {
         release {
@@ -48,6 +50,7 @@ flutter {
     source = "../.."
 }
 dependencies {
+    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.3")
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("androidx.browser:browser:1.8.0")

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:grocery_store/controllers/sign-up-controller.dart';
+import 'package:grocery_store/services/NOTIFICATION-SERVICE.dart';
 
 import 'package:lottie/lottie.dart';
 
@@ -205,13 +206,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         height: 50,
                         width: 200,
                         child: TextButton(
-                          onPressed: ()async {
+                          onPressed: () async {
+                            NotificationService notificationService =
+                                NotificationService();
                             String name = Name.text.trim();
                             String email = Email.text.trim();
                             String password = Password.text.trim();
                             String phone = Phone.text.trim();
                             String city = City.text.trim();
-                            String userDeviceToken = '';
+                            String userDeviceToken =
+                                await notificationService.getDeviceToken();
                             if (name.isEmpty ||
                                 email.isEmpty ||
                                 password.isEmpty ||
@@ -222,18 +226,25 @@ class _SignupScreenState extends State<SignupScreen> {
                                       AppConstant.appContrastTextColor,
                                   colorText: AppConstant.appTextColor,
                                   snackPosition: SnackPosition.BOTTOM);
-                            }
-                            else {
-                               UserCredential? userCredential=await signUpController.SignUpMethod(name, email, password, phone, city, userDeviceToken);
-                           if (userCredential!=null) {
-                             Get.snackbar("Varification Email Sent", "Please check your email",
-                                 backgroundColor:
-                                 AppConstant.appContrastTextColor,
-                                 colorText: AppConstant.appTextColor,
-                                 snackPosition: SnackPosition.BOTTOM);
-                             FirebaseAuth.instance.signOut();
-                             Get.offAll(SignInScreen());
-                           }
+                            } else {
+                              UserCredential? userCredential =
+                                  await signUpController.SignUpMethod(
+                                      name,
+                                      email,
+                                      password,
+                                      phone,
+                                      city,
+                                      userDeviceToken);
+                              if (userCredential != null) {
+                                Get.snackbar("Varification Email Sent",
+                                    "Please check your email",
+                                    backgroundColor:
+                                        AppConstant.appContrastTextColor,
+                                    colorText: AppConstant.appTextColor,
+                                    snackPosition: SnackPosition.BOTTOM);
+                                FirebaseAuth.instance.signOut();
+                                Get.offAll(SignInScreen());
+                              }
                             }
                           },
                           child: Text(
